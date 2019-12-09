@@ -22,15 +22,15 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 
 	# Active ancestor
 	if (in_array('current-menu-ancestor', $classes) or in_array('current_page_ancestor', $classes)) {
-		$newClasses[] = apply_filters('sleek_menu_class_active_ancestor', 'active-ancestor');
+		$newClasses[] = 'active-ancestor';
 	}
 	# Active parent
 	if (in_array('current-menu-parent', $classes) or in_array('current_page_parent', $classes)) {
-		$newClasses[] = apply_filters('sleek_menu_class_active_parent', 'active-parent');
+		$newClasses[] = 'active-parent';
 	}
 	# Active
 	if (in_array('current-menu-item', $classes) or in_array('current_page_item', $classes)) {
-		$newClasses[] = apply_filters('sleek_menu_class_active', 'active');
+		$newClasses[] = 'active';
 	}
 
 	return $newClasses;
@@ -44,19 +44,11 @@ add_action('wp_list_categories', function ($output) {
 	$output = preg_replace('/ title="(.*?)"/s', '', $output);
 
 	# Replace current-cat classes
-	$output = str_replace([
-		'current-cat-ancestor',
-		'current-cat-parent',
-		'current-cat'
-	], [
-		apply_filters('sleek_menu_class_active_ancestor', 'active-ancestor'),
-		apply_filters('sleek_menu_class_active_parent', 'active-parent'),
-		apply_filters('sleek_menu_class_active', 'active')
-	], $output);
+	$output = str_replace(['current-cat-ancestor', 'current-cat-parent', 'current-cat'], ['active-ancestor', 'active-parent', 'active'], $output);
 
 	# If there's no current cat - add the class to the "all" link
 	if (strpos($output, 'active') === false) {
-		$output = str_replace('cat-item-all', 'cat-item-all ' . apply_filters('sleek_menu_class_active', 'active'), $output);
+		$output = str_replace('cat-item-all', 'cat-item-all ' . 'active', $output);
 	}
 
 	# Remove cat-item* classes and do more cleanup
@@ -83,15 +75,13 @@ add_action('wp_list_categories', function ($output) {
 add_filter('nav_menu_css_class', function ($classes, $item) {
 	global $wp_query;
 
-	$activeParent = apply_filters('sleek_menu_class_active_parent', 'active-parent');
-
 	# Only do this on archive pages
 	if (is_archive()) {
 		# This is the link to the blog archive
 		if (get_option('page_for_posts') and $item->object_id === get_option('page_for_posts')) {
 			# If we're on a blog archive - give the blog link the active class
 			if (is_category() or is_tag() or is_day() or is_month() or is_year()) {
-				$classes[] = $activeParent;
+				$classes[] = 'active-parent';
 			}
 		}
 		# This is a link to a custom post type archive
@@ -101,7 +91,7 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 				$term = $wp_query->get_queried_object();
 
 				if (is_object_in_taxonomy($item->object, $term->taxonomy)) {
-					$classes[] = $activeParent;
+					$classes[] = 'active-parent';
 				}
 			}
 		}
