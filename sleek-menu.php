@@ -23,7 +23,8 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 		'current-menu-parent' => 'active-parent',
 		'current_page_parent' => 'active-parent',
 		'current-menu-item' => 'active',
-		'current_page_item' => 'active'
+		'current_page_item' => 'active',
+		'menu-item-has-children' => 'dropdown'
 	];
 	$classRemove = [
 		'/menu\-item/',
