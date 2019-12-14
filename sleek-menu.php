@@ -17,20 +17,38 @@ add_filter('nav_menu_item_id', '__return_null');
 ##################
 # Clean up classes
 add_filter('nav_menu_css_class', function ($classes, $item) {
+	$classMap = [
+		'current-menu-ancestor' => 'active-ancestor',
+		'current_page_ancestor' => 'active-ancestor',
+		'current-menu-parent' => 'active-parent',
+		'current_page_parent' => 'active-parent',
+		'current-menu-item' => 'active',
+		'current_page_item' => 'active'
+	];
+	$classRemove = [
+		'/menu\-item/',
+		'/menu\-item-.*/'
+	];
 	$newClasses = [];
 #	$newClasses[] = sanitize_title($item->title);
 
-	# Active ancestor
-	if (in_array('current-menu-ancestor', $classes) or in_array('current_page_ancestor', $classes)) {
-		$newClasses[] = 'active-ancestor';
-	}
-	# Active parent
-	if (in_array('current-menu-parent', $classes) or in_array('current_page_parent', $classes)) {
-		$newClasses[] = 'active-parent';
-	}
-	# Active
-	if (in_array('current-menu-item', $classes) or in_array('current_page_item', $classes)) {
-		$newClasses[] = 'active';
+	foreach ($classes as $class) {
+		if (isset($classMap[$class])) {
+			$newClasses[] = $classMap[$class];
+		}
+		else {
+			$remove = false;
+
+			foreach ($classRemove as $regex) {
+				if (preg_match($regex, $class)) {
+					$remove = true;
+				}
+			}
+
+			if (!$remove) {
+				$newClasses[] = $class;
+			}
+		}
 	}
 
 	return $newClasses;
