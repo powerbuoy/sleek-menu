@@ -5,7 +5,7 @@ namespace Sleek\Menu;
 # Remove container & ID
 add_filter('wp_nav_menu_args', function ($args) {
 	$args['container'] = false;
-	$args['items_wrap'] = '<ul class="%2$s">%3$s</ul>';
+	$args['items_wrap'] = '<ul class="%1$s">%3$s</ul>';
 
 	return $args;
 });
