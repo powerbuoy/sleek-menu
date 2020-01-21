@@ -99,7 +99,7 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 		# This is the link to the blog archive
 		if (get_option('page_for_posts') and $item->object_id === get_option('page_for_posts')) {
 			# If we're on a blog archive - give the blog link the active class
-			if (is_category() or is_tag() or is_day() or is_month() or is_year()) {
+			if (is_category() or is_tag() or is_date()) {
 				$classes[] = 'active-parent';
 			}
 		}
