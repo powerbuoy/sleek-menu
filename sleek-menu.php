@@ -58,6 +58,11 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 #############################
 # Clean up wp_list_categories
 add_action('wp_list_categories', function ($output) {
+	# If there are no categories, don't display anything
+	if (strpos($output, 'cat-item-none') !== false) {
+		return false;
+	}
+
 	# Remove title attributes (which can be insanely long)
 	# https://www.isitwp.com/remove-title-attribute-from-wp_list_categories/
 	$output = preg_replace('/ title="(.*?)"/s', '', $output);
@@ -79,11 +84,6 @@ add_action('wp_list_categories', function ($output) {
 	$output = str_replace("class=' active'", 'class="active"', $output);
 	$output = str_replace("<ul class='children'", '<ul', $output);
 	$output = str_replace('class="  ', 'class="', $output);
-
-	# If there are no categories, don't display anything
-	if (strpos($output, 'cat-item-none') !== false) {
-		$output = false;
-	}
 
 	return $output;
 });
