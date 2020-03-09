@@ -1,5 +1,6 @@
 {
     "name": "powerbuoy/sleek-menu",
+    "description": "Cleans up the menu HTML by removing IDs and redundant classes. Also fixes active-classes on post type and taxonomy archives.",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
