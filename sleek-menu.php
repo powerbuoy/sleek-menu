@@ -65,6 +65,7 @@ add_action('wp_list_categories', function ($output) {
 
 	# Remove title attributes (which can be insanely long)
 	# https://www.isitwp.com/remove-title-attribute-from-wp_list_categories/
+	# TODO: use_desc_for_title https://developer.wordpress.org/reference/functions/wp_list_categories/
 	$output = preg_replace('/ title="(.*?)"/s', '', $output);
 
 	# Replace current-cat classes
@@ -125,7 +126,7 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 # https://stackoverflow.com/questions/3269878/wordpress-custom-post-type-hierarchy-and-menu-highlighting-current-page-parent/3270171#3270171
 # https://core.trac.wordpress.org/ticket/13543
 add_filter('nav_menu_css_class', function ($classes, $item) {
-	if (get_post_type() !== 'post' and $item->object_id === get_option('page_for_posts')) {
+	if (get_post_type() !== 'post' and (int) $item->object_id === (int) get_option('page_for_posts')) {
 		foreach ($classes as $k => $v) {
 			if ($v === 'active-parent') {
 				unset($classes[$k]);
