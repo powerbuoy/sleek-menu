@@ -120,13 +120,12 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 	return array_unique($classes);
 }, 10, 2);
 
-###############################
-# Remove active class from blog
-# when viewing other archives
+#############################################################################
+# Remove active class from blog when viewing other archives or search results
 # https://stackoverflow.com/questions/3269878/wordpress-custom-post-type-hierarchy-and-menu-highlighting-current-page-parent/3270171#3270171
 # https://core.trac.wordpress.org/ticket/13543
 add_filter('nav_menu_css_class', function ($classes, $item) {
-	if (get_post_type() !== 'post' and (int) $item->object_id === (int) get_option('page_for_posts')) {
+	if ((int) $item->object_id === (int) get_option('page_for_posts') and ((get_post_type() !== 'post') or is_search())) {
 		foreach ($classes as $k => $v) {
 			if ($v === 'active-parent') {
 				unset($classes[$k]);
@@ -137,9 +136,8 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 	return $classes;
 }, 10, 2);
 
-#######################################
-# Add active class to post type archive
-# when viewing singular
+#############################################################
+# Add active class to post type archive when viewing singular
 add_filter('nav_menu_css_class', function ($classes, $item) {
 	if ($item->type === 'post_type_archive' and is_singular($item->object)) {
 		$classes[] = 'active-parent';
