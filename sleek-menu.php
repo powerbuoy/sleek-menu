@@ -138,10 +138,33 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 
 #############################################################
 # Add active class to post type archive when viewing singular
-add_filter('nav_menu_css_class', function ($classes, $item) {
-	if ($item->type === 'post_type_archive' and is_singular($item->object)) {
-		$classes[] = 'active-parent';
+add_action('wp', function () {
+	$allMenus = get_terms(['taxonomy' => 'nav_menu', 'hide_empty' => false]);
+	$activeAncestors = [];
+	$activeParents = [];
+
+	foreach ($allMenus as $menu) {
+		$allItems = wp_get_nav_menu_items($menu);
+
+		foreach ($allItems as $item) {
+			if ($item->type === 'post_type_archive' and is_singular($item->object)) {
+				$activeParents[] = (int) $item->ID;
+
+				if ($item->menu_item_parent) {
+					$activeAncestors[] = (int) $item->menu_item_parent;
+				}
+			}
+		}
 	}
 
-	return $classes;
-}, 10, 2);
+	add_filter('nav_menu_css_class', function ($classes, $item) use ($activeAncestors, $activeParents) {
+		if (in_array($item->ID, $activeAncestors)) {
+			$classes[] = 'active-ancestor';
+		}
+		if (in_array($item->ID, $activeParents)) {
+			$classes[] = 'active-parent';
+		}
+
+		return $classes;
+	}, 10, 2);
+}, 99);
