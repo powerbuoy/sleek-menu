@@ -139,17 +139,22 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 #############################################################
 # Add active class to post type archive when viewing singular
 add_action('wp', function () {
+	# Grab all menus
 	$allMenus = get_terms(['taxonomy' => 'nav_menu', 'hide_empty' => false]);
 	$activeAncestors = [];
 	$activeParents = [];
 
+	# And all menu items in each menu
 	foreach ($allMenus as $menu) {
 		$allItems = wp_get_nav_menu_items($menu);
 
 		foreach ($allItems as $item) {
+			# If this menu item posts to a post type archive and we're currently viewing said post-type
 			if ($item->type === 'post_type_archive' and is_singular($item->object)) {
+				# Store its ID for later
 				$activeParents[] = (int) $item->ID;
 
+				# If this menu item has a parent, store its ID too
 				if ($item->menu_item_parent) {
 					$activeAncestors[] = (int) $item->menu_item_parent;
 				}
@@ -157,6 +162,7 @@ add_action('wp', function () {
 		}
 	}
 
+	# Now add an active class to all stored IDs
 	add_filter('nav_menu_css_class', function ($classes, $item) use ($activeAncestors, $activeParents) {
 		if (in_array($item->ID, $activeAncestors)) {
 			$classes[] = 'active-ancestor';
@@ -167,4 +173,32 @@ add_action('wp', function () {
 
 		return $classes;
 	}, 10, 2);
+
+
+	// Alternative version: Set current property of menu items before output
+	// NOTE: Setting current_parent etc here doesn't work, it doesn't add any classes in the end
+	/* add_filter('wp_nav_menu_objects', function ($items, $args) {
+		$ancestor = null;
+
+		foreach ($items as $item) {
+			if ($item->type === 'post_type_archive' and is_singular($item->object)) {
+				$item->current_parent = $item->current_item_parent = true;
+
+				if ($item->menu_item_parent) {
+					$ancestor = (int) $item->menu_item_parent;
+				}
+			}
+		}
+
+		if ($ancestor) {
+			foreach ($items as $item) {
+				if ($item->ID === $ancestor) {
+					\Sleek\Utils\log($item);
+					$item->current_ancestor = $item->current_item_ancestor = true;
+				}
+			}
+		}
+
+		return $items;
+	}, 10, 2); */
 }, 99);
