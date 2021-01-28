@@ -138,6 +138,16 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 
 #############################################################
 # Add active class to post type archive when viewing singular
+function get_nav_menu_item_by_id ($id, $items) {
+	foreach ($items as $item) {
+		if ($id === $item->ID) {
+			return $item;
+		}
+	}
+
+	return null;
+}
+
 add_action('wp', function () {
 	# Grab all menus
 	$allMenus = get_terms(['taxonomy' => 'nav_menu', 'hide_empty' => false]);
@@ -156,7 +166,12 @@ add_action('wp', function () {
 
 				# If this menu item has a parent, store its ID too
 				if ($item->menu_item_parent) {
-					$activeAncestors[] = (int) $item->menu_item_parent;
+					$parent = $item;
+
+					# And all its potential parents
+					while ($parent = get_nav_menu_item_by_id((int) $parent->menu_item_parent, $allItems)) {
+						$activeAncestors[] = (int) $parent->ID;
+					}
 				}
 			}
 		}
