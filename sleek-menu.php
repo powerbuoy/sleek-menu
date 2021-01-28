@@ -188,32 +188,4 @@ add_action('wp', function () {
 
 		return $classes;
 	}, 10, 2);
-
-
-	// Alternative version: Set current property of menu items before output
-	// NOTE: Setting current_parent etc here doesn't work, it doesn't add any classes in the end
-	/* add_filter('wp_nav_menu_objects', function ($items, $args) {
-		$ancestor = null;
-
-		foreach ($items as $item) {
-			if ($item->type === 'post_type_archive' and is_singular($item->object)) {
-				$item->current_parent = $item->current_item_parent = true;
-
-				if ($item->menu_item_parent) {
-					$ancestor = (int) $item->menu_item_parent;
-				}
-			}
-		}
-
-		if ($ancestor) {
-			foreach ($items as $item) {
-				if ($item->ID === $ancestor) {
-					\Sleek\Utils\log($item);
-					$item->current_ancestor = $item->current_item_ancestor = true;
-				}
-			}
-		}
-
-		return $items;
-	}, 10, 2); */
 }, 99);
