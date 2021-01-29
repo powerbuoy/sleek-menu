@@ -125,6 +125,7 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 # https://stackoverflow.com/questions/3269878/wordpress-custom-post-type-hierarchy-and-menu-highlighting-current-page-parent/3270171#3270171
 # https://core.trac.wordpress.org/ticket/13543
 add_filter('nav_menu_css_class', function ($classes, $item) {
+	# NOTE: Is get_post_type() safe here??
 	if ((int) $item->object_id === (int) get_option('page_for_posts') and ((get_post_type() !== 'post') or is_search())) {
 		foreach ($classes as $k => $v) {
 			if ($v === 'active-parent') {
@@ -160,7 +161,13 @@ add_action('wp', function () {
 
 		foreach ($allItems as $item) {
 			# If this menu item posts to a post type archive and we're currently viewing said post-type
-			if ($item->type === 'post_type_archive' and is_singular($item->object)) {
+			\Sleek\Utils\log($item->title);
+			\Sleek\Utils\log($item);
+
+			if (
+				($item->type === 'post_type_archive' and is_singular($item->object)) or
+				((int) $item->object_id === (int) get_option('page_for_posts') and is_singular('post'))
+			) {
 				# Store its ID for later
 				$activeParents[] = (int) $item->ID;
 
