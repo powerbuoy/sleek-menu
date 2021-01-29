@@ -161,9 +161,6 @@ add_action('wp', function () {
 
 		foreach ($allItems as $item) {
 			# If this menu item posts to a post type archive and we're currently viewing said post-type
-			\Sleek\Utils\log($item->title);
-			\Sleek\Utils\log($item);
-
 			if (
 				($item->type === 'post_type_archive' and is_singular($item->object)) or
 				((int) $item->object_id === (int) get_option('page_for_posts') and is_singular('post'))
