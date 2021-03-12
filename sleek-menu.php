@@ -99,7 +99,8 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 		(
 			is_search() or
 			(is_singular() and !is_singular('post')) or
-			is_tax()
+			is_tax() or
+			(is_post_type_archive() and !is_home())
 		)
 	) {
 		foreach ($classes as $k => $v) {
