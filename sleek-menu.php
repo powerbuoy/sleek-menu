@@ -113,6 +113,20 @@ add_filter('nav_menu_css_class', function ($classes, $item) {
 	return $classes;
 }, 10, 2);
 
+########################################
+# Remove active class everywhere on SERP
+add_filter('nav_menu_css_class', function ($classes) {
+	if (is_search()) {
+		foreach ($classes as $k => $v) {
+			if ($v === 'active' or $v === 'active-parent' or $v === 'active-ancestor') {
+				unset($classes[$k]);
+			}
+		}
+	}
+
+	return $classes;
+}, 10);
+
 ############################################################
 # Fix active classes relating to CPT archives and taxonomies
 function get_nav_menu_item_by_id ($id, $items) {
